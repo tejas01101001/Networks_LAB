@@ -51,10 +51,10 @@ char *encoder(char *input_string)
 
         for (int j = 6; j <= bits_count; j += 6)
         {
-            // Convert the chunks of 24 bits into 4 base64 chars.
+            // Convert the chunks of 6 bits into a base64 encoded character.
 
             int temp = value >> (bits_count - j);      // Consider the first j bits.
-            int six_bits = temp % 64;                  // Of the above numbers consider the 6 Lowest significant bits
+            int six_bits = temp % 64;                  // Of the above number consider the 6 Lowest significant bits
             char ch = base64[six_bits];                // Find appropriate character for the 6 bit code in base64 system.
             encoded_string[index++] = ch;              // Assign the character in the encoded string.
         }

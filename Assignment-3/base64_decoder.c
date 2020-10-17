@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 const int SIZE = 2000;
 
@@ -24,46 +25,75 @@ char *decoder(char *encoded_string)
         bits_count = 24;
         padding = 0;
 
+          // Loop to take chunks of 4 characters starting at position i
         for (int j = i; j <= i + 3 && j < len; j++)
         {
-            int temp_index;
-            if (encoded_string[j] >= 'A' && encoded_string[j] <= 'Z')
-                temp_index = encoded_string[j] - 'A';
-            else if (encoded_string[j] >= 'a' && encoded_string[j] <= 'z')
-                temp_index = encoded_string[j] - 'a' + 26;
-            else if (encoded_string[j] >= '0' && encoded_string[j] <= '9')
-                temp_index = encoded_string[j] - '0' + 52;
+            int base64_character_index; // Used to store the index of base64 character
+
+            if (isupper(encoded_string[j]))
+            {
+                base64_character_index = encoded_string[j] - 'A';
+            }
+            else if (islower(encoded_string[j]))
+            {
+                base64_character_index = encoded_string[j] - 'a' + 26;
+            }
+            else if (isdigit(encoded_string[j]))
+            {
+                base64_character_index = encoded_string[j] - '0' + 52;
+            }
             else if (encoded_string[j] == '+')
-                temp_index = 62;
+            {
+                base64_character_index = 62;
+            }
             else if (encoded_string[j] == '/')
-                temp_index = 63;
+            {
+                base64_character_index = 63;
+            }
             else if (encoded_string[j] == '=')
             {
-                count++;
+                padding++;
                 continue;
             }
+
+            // Shift value by 6 bits as each character in the encoded string takes up 6 bits in binary form.
             value = value << 6;
-            value = value | temp_index;
+            value = value | base64_character_index;
         }
 
         if (padding == 2)
         {
+            // Remove the 4 lowest significant bits in the binary representation of value
             value = value >> 4;
             bits_count = 8;
         }
         else if (padding == 1)
         {
+            // Remove the 4 lowest significant bits in the binary representation of value
             value = value >> 2;
             bits_count = 16;
         }
 
         for (int j = 8; j <= bits_count; j += 8)
         {
-            int temp = value >> (bits_count - j);
-            int ind = temp % 256;
-            decoded_string[index++] = (char)ind;
+            // Convert the chunks of 8 bits into a ASCII character.
+
+            int temp = value >> (bits_count - j);        // Consider the first j bits.
+            int eight_bits = temp % 256;                 // Of the above number consider the 8 Lowest significant bits
+            decoded_string[index++] = (char)eight_bits;  // Assign the ASCII character in the decoded string.
         }
     }
+
     decoded_string[index] = '\0';
+    
     return decoded_string;
+}
+
+int main()
+{
+    char encoded_string[] = "Z2Vla3Nmb3JnZWVrcw==";
+
+    printf("%s", decoder(encoded_string));
+
+    return 0;
 }
