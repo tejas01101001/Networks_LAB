@@ -16,7 +16,7 @@ char *encoder(char *input_string)
     int bits_count = 0;             // Used to keep track of number of bits of the variable value.
 
     // Allocation of memory for the encoded string
-    char *encoded_string = (char *)malloc(2000 * sizeof(char));
+    char *encoded_string = (char *)malloc(SIZE * sizeof(char));
 
     // Here we take 3 characters of the input string at a time
     // and store their value in variable value.
