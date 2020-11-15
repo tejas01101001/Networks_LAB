@@ -106,7 +106,7 @@ int main(int argc, char *argv[])
             close(server_socket);            // Server socket is handled by parent process
             rcv_ack(client_socket, &client); // Used to handle a client
         }
-        else if (concurrent == 0)
+        else if (concurrent == -1)
         {
             // error while creating child process
             printf("\nCOULDN'T ESTABLISH CONNECTION\n");
